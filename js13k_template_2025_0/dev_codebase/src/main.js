@@ -11,9 +11,22 @@ var w2 = 960; var h2 = 540;
 var debug = true;
 var webGL = true;
 
+
+let gp = navigator.getGamepads()[0];
+
 // App Setup
 window.onload = function() 
 {
+
+    window.addEventListener("gamepadconnected", (e) => {
+        console.log("Gamepad connected:", e.gamepad);
+        gp = navigator.getGamepads()[0];
+    });
+    
+    window.addEventListener("gamepaddisconnected", e => {
+        console.log("❌ Gamepad disconnected:", e.gamepad.id);
+    });
+    
     // loadWeb3();
     initSetup();
 }
@@ -46,6 +59,34 @@ function tick(timestamp)
     cx.clearRect(0, 0, w, h);
     
     cx.font = '16px monospace';
+    
+    // let gp = navigator.getGamepads()[0];
+    // if (gp) {
+    //   const b = gp.buttons;
+    //   up    = b[12]?.pressed;
+    //   down  = b[13]?.pressed;
+    //   left  = b[14]?.pressed;
+    //   right = b[15]?.pressed;
+  
+    //   // Optionally support left stick:
+    //   const ax = gp.axes[0], ay = gp.axes[1];
+    //   if (ax < -0.5) left = true;
+    //   if (ax >  0.5) right = true;
+    //   if (ay < -0.5) up = true;
+    //   if (ay >  0.5) down = true;
+    // }
+
+    const gp = navigator.getGamepads()[0];
+    // if (gp) {
+    //     console.log("Gamepad found:", gp.id);
+    //     gp.buttons.forEach((btn, index) => {
+    //         if (btn.pressed) console.log("Button pressed:", index);
+    //     });
+    if (gp) {
+        console.log("Buttons:", gp.buttons.length);
+    } else {
+        console.log("Gamepad not found");
+    }
 
     cx.fillStyle = '#fff';
     if(up) { cx.fillStyle = '#3f3'; }
@@ -99,18 +140,18 @@ function setupEventListeners(c) {
 
     // Event listener to track mouse/touch movement
     c.addEventListener('pointermove', (e) => {
-        console.log("pointermove");
+        // console.log("pointermove");
     });
     // Event listener to track mouse/touch down
     c.addEventListener('pointerdown', (e) => {
-        console.log("pointerdown");
+        // console.log("pointerdown");
     });
     // Event listener to track mouse/touch up
     c.addEventListener('pointerup', (e) => {
-        console.log("pointerup");
+        // console.log("pointerup");
     });
     // The same as pointer up, but for mobile specific cases
     c.addEventListener('pointercancel', (e) => {
-        console.log("pointercancel");
+        // console.log("pointercancel");
     });
 }
