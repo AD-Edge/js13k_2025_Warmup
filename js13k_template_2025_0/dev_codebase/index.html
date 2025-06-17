@@ -1,11 +1,50 @@
 <!-- JS13K, 2025, By AlexDeltaDev twitter.com/Alex_ADEdge -->
+<!-- Based on this mapping by XEM: https://xem.github.io/articles/jsgamesinputs.html -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>JS13K-Warmup-Template</title>
-        <link rel="stylesheet" href="style.css">
+        <style> 
+            html, body {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;  
+                background-color: #272744;
+            }
+            #title {
+                position: absolute; 
+                bottom: 3px; 
+                left: 25px; 
+                color: aliceblue;
+                font-family: "Lucida Console", "Courier New", monospace;
+            }
+            #title2 {
+                position: absolute; 
+                bottom: 24px; 
+                left: 25px; 
+                color: aliceblue;
+                font-family: "Lucida Console", "Courier New", monospace;
+            }
+            canvas {
+                display: block;
+                margin: auto;
+                /* cursor: none; */
+                background-color: #111111;
+            }
+            @media only screen and (min-device-width: 320px) and (max-device-width: 768px) and (orientation: portrait) {
+                canvas {
+                    transform: rotate(90deg);
+                    transform-origin: center center;
+                }
+            }
+        </style>
+        <!-- <link rel="stylesheet" href="style.css"> -->
         <!-- <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script> -->
         <!-- <script type="module" src="./src/main.js"></script> -->
         <script>       
@@ -19,7 +58,7 @@
             var debug = true;
             var webGL = true;
             //GamePad
-            var gp;
+            var gp = navigator.getGamepads()[0];
 
             // App Setup
             window.onload = function() 
@@ -38,8 +77,10 @@
                 asp2 = w2/h2; // Aspect ratio of inner cvs
                 
                 cx.imageSmoothingEnabled = false; // gritty
-
+                
+                // setup listeners, check for game controller
                 setupEventListeners(cvs);
+                if (!gp) { console.log("Gamepad not found (press a button on the controller to connect)"); }
 
                 tick();
             }
@@ -52,8 +93,6 @@
                 gp = navigator.getGamepads()[0];
                 if (gp) {
                     checkGamePad();
-                } else {
-                    console.log("Gamepad not found");
                 }
 
                 // Draw debug outputs to cavans
@@ -145,7 +184,7 @@
                     );
                     gp = navigator.getGamepads()[0];
                 });
-                c.addEventListener("gamepaddisconnected", e => {
+                window.addEventListener("gamepaddisconnected", e => {
                     console.log("Gamepad disconnected:", e.gamepad.id);
                 });
 
