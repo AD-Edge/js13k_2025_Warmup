@@ -23,8 +23,8 @@ function initSetup()
 
     // Mobile/Resizing handling 
 
-    // Kick off Loading
-    startLoad();
+    // Kick off Loading/Generating Assets
+    // startLoad();
     // Kick off main tick
     tick();
 }
