@@ -7,10 +7,9 @@
 [Dd]ata/
 [Bb]uilds/
 
-
-dev_codebase_builds/*.
-codebase/build/*.js
-codebase/testExt/
+prod_build/
+prod_deploy/
+dev_build/
 server/*.txt
 
 # Node artifact files

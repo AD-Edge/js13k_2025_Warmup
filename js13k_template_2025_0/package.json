@@ -4,13 +4,16 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build && node ./scripts/roadroll.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "adm-zip": "^0.5.16",
+    "html-minifier-terser": "^7.2.0",
+    "roadroller": "^2.1.0",
     "vite": "^6.3.5",
     "vite-plugin-singlefile": "^2.2.0"
   }
