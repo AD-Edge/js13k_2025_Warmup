@@ -7,16 +7,8 @@
 [Dd]ata/
 [Bb]uilds/
 
-WebPack Builder/code/
-WebPack Builder/test/
-WebPack Builder/dist/
-WebPack Builder/node_modules/
-WebPackBuild/old/
-WebPackBuild/code/
-WebPackBuild/test/
-WebPackBuild/dist/
-WebPackBuild/node_modules/
-WebPackBuild/src/
+
+dev_codebase_builds/*.
 codebase/build/*.js
 codebase/testExt/
 server/*.txt

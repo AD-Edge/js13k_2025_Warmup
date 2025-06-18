@@ -4,7 +4,7 @@
 import {
     setupEventListeners,
     checkGamePadMain,
-    u, d, l, r
+    getInputs,
 } from './game/input.js';
 
 // Baseline variables 
@@ -41,18 +41,21 @@ function initSetup()
 function tick(timestamp) 
 {
     cx.clearRect(0, 0, w, h);
-    
+
+    // Handle control inputs
     checkGamePadMain();
+    const { uu, dd, ll, rr } = getInputs();
+
     // Draw debug outputs to cavans
     cx.font = '16px monospace';
-    cx.fillStyle = u ? '#3f3' : '#fff';
-    cx.fillText('Up: ' + u, 10, 30);
-    cx.fillStyle = d ? '#3f3' : '#fff';
-    cx.fillText('Down: ' + d, 10, 50);
-    cx.fillStyle = l ? '#3f3' : '#fff';
-    cx.fillText('Left: ' + l, 10, 70);
-    cx.fillStyle = r ? '#3f3' : '#fff';
-    cx.fillText('Right: ' + r, 10, 90);
+    cx.fillStyle = uu ? '#3f3' : '#fff';
+    cx.fillText('Up: ' + uu, 10, 30);
+    cx.fillStyle = dd ? '#3f3' : '#fff';
+    cx.fillText('Down: ' + dd, 10, 50);
+    cx.fillStyle = ll ? '#3f3' : '#fff';
+    cx.fillText('Left: ' + ll, 10, 70);
+    cx.fillStyle = rr ? '#3f3' : '#fff';
+    cx.fillText('Right: ' + rr, 10, 90);
 
     requestAnimationFrame(tick);
 }
