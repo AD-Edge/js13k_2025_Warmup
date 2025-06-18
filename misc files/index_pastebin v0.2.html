@@ -1,0 +1,129 @@
+<!-- JS13K, 2025, By AlexDeltaDev twitter.com/Alex_ADEdge -->
+<!-- Input setup based on this mapping by XEM: https://xem.github.io/articles/jsgamesinputs.html -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>JS13K-Warmup-Template</title>
+        <style> #title,#title2{position:absolute;left:25px;color:#f0f8ff;font-family:"Lucida Console","Courier New",monospace}body,html{width:100%;height:100%;touch-action:none;overflow:hidden;display:flex;justify-content:center;align-items:center;background-color:#272744}#title{bottom:3px}#title2{bottom:24px}canvas{display:block;margin:auto;background-color:#111}@media only screen and (min-device-width:320px) and (max-device-width:768px) and (orientation:portrait){canvas{transform:rotate(90deg);transform-origin:center center}}</style>
+        <!-- <link rel="stylesheet" href="style.css"> -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script> -->
+        <!-- <script type="module" src="./src/main.js"></script> -->
+        <script>       
+            //////////////////////////////////////////////////////////
+            //                        MAIN                          //
+            //////////////////////////////////////////////////////////
+            // Baseline variables 
+            var mobile, app, cvs, cx, w, h, asp, asp2, rect, rng, seed, mouseX, mouseY;
+            // Scalings
+            var w2 = 960; var h2 = 540;
+            // Toggles
+            var debug = true;
+            var webGL = true;
+            // App Setup
+            window.onload = function() {
+                initSetup();
+            }
+            function initSetup() 
+            {
+                console.log("Initilizing...");
+                cvs = document.getElementById('cvs');
+                cx = cvs.getContext("2d");
+                w = cvs.clientWidth;
+                h = cvs.clientHeight;
+                asp = w/h; // Aspect ratio of window
+                asp2 = w2/h2; // Aspect ratio of inner cvs
+                cx.imageSmoothingEnabled = false; // gritty
+                // Setup event listeners/input
+                setupEventListeners(cvs);
+                tick();
+            }
+            function tick(timestamp) 
+            {
+                cx.clearRect(0, 0, w, h);
+
+                // Handle control inputs
+                checkGamePadMain();
+                const { uu, dd, ll, rr } = getInputs();
+                // Draw debug outputs to cavans
+                cx.font = '16px monospace';
+                cx.fillStyle = uu ? '#3f3' : '#fff';
+                cx.fillText('Up: ' + uu, 10, 30);
+                cx.fillStyle = dd ? '#3f3' : '#fff';
+                cx.fillText('Down: ' + dd, 10, 50);
+                cx.fillStyle = ll ? '#3f3' : '#fff';
+                cx.fillText('Left: ' + ll, 10, 70);
+                cx.fillStyle = rr ? '#3f3' : '#fff';
+                cx.fillText('Right: ' + rr, 10, 90);
+
+                requestAnimationFrame(tick);
+            }
+            //////////////////////////////////////////////////////////
+            //                   Input Setup                        //
+            //////////////////////////////////////////////////////////
+            let u=0,d=0,l=0,r=0;
+            let cu=0,cd=0,cl=0,cr=0;
+            //GamePad
+            var p=navigator.getGamepads()[0]
+
+            //120 bytes (whole function)
+            onkeydown=n=>{let e=n.key;u|="U"==e[5]|"w"==e|"z"==e,d|="D"==e[5]|"s"==e,l|="L"==e[5]|"a"==e|"q"==e,r|="R"==e[5]|"d"==e}
+            onkeyup=e=>{let k=e.key;u&=!("U"==k[5]|"w"==k|"z"==k),d&=!("D"==k[5]|"s"==k),l&=!("L"==k[5]|"a"==k|"q"==k),r&=!("R"==k[5]|"d"==k)};
+
+            function setupEventListeners(c) {
+                window.addEventListener('keydown', onkeydown);
+                window.addEventListener('keyup', onkeyup);
+
+                window.addEventListener("gamepadconnected", (e) => {
+                    console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+                        e.gamepad.index, e.gamepad.id,
+                        e.gamepad.buttons.length, e.gamepad.axes.length
+                    );
+                    p=navigator.getGamepads()[0];
+                });
+                // window.addEventListener("gamepaddisconnected", e => {
+                //     console.log("Gamepad disconnected:", e.gamepad.id);
+                // });
+                if (!p) { console.log("Gamepad not found (press a button on the controller to connect)"); }
+
+                // change to window.addEventListener ? 
+                c.addEventListener('pointermove', (e) => {});
+                c.addEventListener('pointerdown', (e) => {});
+                c.addEventListener('pointerup', (e) => {});
+                c.addEventListener('pointercancel', (e) => {});
+            }
+            function checkGamePadMain() {
+                p=navigator.getGamepads()[0]
+                if(p){
+                    let b=p.buttons
+                    // Debug controller buttons
+                    // console.log(JSON.stringify(p.buttons.map(b => b.value), null, 2));
+                    // b.forEach((btn, index) => {
+                    //     if (btn.pressed) console.log("Button pressed:", index);
+                    // });
+                    //Reset controller bits
+                    cu=cd=cl=cr=0
+                    //handle DPad and left analoge
+                    cu |= b[12]?.pressed || p.axes[1] < -0.5
+                    cd |= b[13]?.pressed || p.axes[1] > 0.5
+                    cl |= b[14]?.pressed || p.axes[0] < -0.5
+                    cr |= b[15]?.pressed || p.axes[0] > 0.5
+                }
+            }
+            function getInputs() {
+                return {
+                uu: u || cu,
+                dd: d || cd,
+                ll: l || cl,
+                rr: r || cr
+                };
+            }
+        </script>
+    </head>
+    <body>
+        <h3 id="title">JS13K 2025 (Warmup/Template)</h3>
+        <p id="title2">v.0.2x</p>
+        <canvas id="cvs" width="960" height="540"></canvas>
+    </body>
+</html>
