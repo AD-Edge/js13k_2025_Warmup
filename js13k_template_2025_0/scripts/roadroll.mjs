@@ -37,7 +37,7 @@ async function run() {
 
   // Save final out
   fs.writeFileSync(htmlPath, html)
-  console.log(`✓✓ Roadroller-packed JS embedded into ${htmlPath}.`);
+  console.log(`✓✓ Roadroller-packed JS embedded into ${htmlPath}.\n`);
   
   // File size output
   const maxSize = 13312;
@@ -55,11 +55,49 @@ async function run() {
   const zipPercent = ((zipSize / maxSize) * 100).toFixed(1);
   console.log(`📦 ZIP size: ${zipSize} bytes (${(zipSize / 1024).toFixed(2)} KB) - (${zipPercent}% of 13KB)`);
 
+  outputBuildFile(rawSize, zipSize, zipPercent, maxSize);
+
+  // File size check & final print
   if (zipSize > 13312) {
     console.warn(`⚠️  WARNING -- ZIP exceeds 13KB limit! (Over by ${zipPercent}%)`);
   } else {
     console.log(`✅ ZIP is within js13k limits: (${zipPercent}% used)`);
   }
+  
+}
+
+function outputBuildFile(rawSize, zipSize, zipPercent, maxSize) {
+  const startDate = new Date('2025-08-13')
+  const now = new Date()
+  const msPerDay = 1000 * 60 * 60 * 24
+  const daysSinceStart = Math.floor((now - startDate) / msPerDay)
+
+  // Build stats output 
+  const pad = (n) => n.toString().padStart(2, '0')
+  const timestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}`
+  // Build stats file path
+  const statsPath = `./dev_build/build-stats-${timestamp}.md`
+
+  // Write plain Markdown with labels + values
+  const stats = `
+  # Build Stats ${timestamp}
+
+  Pre-compressed HTML size:
+  ${(rawSize / 1024).toFixed(2)} KB (${rawSize} bytes)
+
+  Final ZIP size:
+  ${(zipSize / 1024).toFixed(2)} KB (${zipSize} bytes)
+
+  ZIP size as % of 13KB:
+  ${zipPercent}%
+
+  ${zipSize > maxSize ? '⚠️ ZIP exceeds 13KB limit' : '✅ ZIP is within 13KB limit'}
+
+  This build was created on Day [${daysSinceStart}] of JS13K 2025 (31 Days total)
+  `.trim()
+
+  fs.writeFileSync(statsPath, stats)
+  console.log(`✅ Wrote build stats to ${statsPath}`)
 }
 
 run().catch(console.error);
