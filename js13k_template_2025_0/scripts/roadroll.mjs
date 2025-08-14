@@ -1,6 +1,7 @@
 import fs from 'fs'
+import { minify as jsMinify } from 'terser'
 import { Packer } from 'roadroller';
-import { minify } from 'html-minifier-terser'
+import { minify as htmlMinify } from 'html-minifier-terser'
 import AdmZip from 'adm-zip'
 
 async function run() {
@@ -10,13 +11,19 @@ async function run() {
   // Strip out the commented-out <script> block first
   html = html.replace(/<!--\s*<script[^>]*>[\s\S]*?<\/script>\s*-->/, '')
 
-  // Then find the real inlined script
   const match = html.match(/<script[^>]*>([\s\S]*?)<\/script>/)
-  if (!match) throw new Error('No <script> found.')
+  // Then find the real inlined script
   const [fullScriptTag, originalJS] = match
+  const minifiedJS = (await jsMinify(originalJS)).code
+  const packer = new Packer([{ data: minifiedJS, type: 'js', action: 'eval' }], {})
+  if (!match) throw new Error('No <script> found.')
+  // const [fullScriptTag, originalJS] = match
 
   // Compress with Roadroller
-  const packer = new Packer([{ data: originalJS, type: 'js', action: 'eval' }], {})
+  // const packer = new Packer(
+  // [{ data: originalJS, type: 'js', action: 'eval' }],
+  // { cruncher: [/*'lz',*/ 'rle', 'lz77'], dictionary: true }
+  // )
   await packer.optimize()
   const { firstLine, secondLine } = packer.makeDecoder()
   const packed = firstLine + secondLine
@@ -25,14 +32,21 @@ async function run() {
   html = html.replace(fullScriptTag, `<script>${packed}</script>`)
 
   // Minify final HTML (incl. inline JS & CSS)
-  html = await minify(html, {
+  html = await htmlMinify(html, {
     collapseWhitespace: true,
     removeComments: true,
     minifyJS: true,
     minifyCSS: true,
     removeAttributeQuotes: true,
     useShortDoctype: true,
-    removeOptionalTags: true
+    removeOptionalTags: true,
+    removeRedundantAttributes: true,
+    removeEmptyAttributes: true,
+    removeScriptTypeAttributes: true,
+    removeStyleLinkTypeAttributes: true,
+    sortAttributes: true,
+    sortClassName: true,
+    minifyURLs: true
   })
 
   // Save final out
@@ -47,7 +61,8 @@ async function run() {
   
   // ZIP Compress
   const zip = new AdmZip()
-  zip.addFile('index.html', Buffer.from(html))
+  // zip.addFile('index.html', Buffer.from(html))
+  zip.addFile('index.html', Buffer.from(html), '', 9)
   const zipPath = './dev_build/g.zip'
   zip.writeZip(zipPath)
   
