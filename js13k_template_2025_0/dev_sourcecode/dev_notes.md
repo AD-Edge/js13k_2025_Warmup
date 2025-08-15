@@ -14,6 +14,7 @@ ignore the following:
 
 Build the dev version with: >npm run build
 Run (Dev with live refresh) with: >npm run dev
+    (this runs the dev BUILD in /dev_build/)
 
 Serve the build version: >serve dev_codebase_builds
 
@@ -21,3 +22,8 @@ Serve the build version: >serve dev_codebase_builds
 
 (if its the first time using this template, make sure to run 'npm install' first to setup node modules)
 
+## For 'Live' Dev
+
+We need to use 'Live Server' to create a session, within dev_sourcecode
+    
+    *note that code needs to manage imports etc here, somewhat untested, but it seems like roadroller crunches this down when it creates the single index.html file 
